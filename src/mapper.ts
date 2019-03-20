@@ -46,10 +46,10 @@ export const toContact = (contact: CopperContact): Contact => ({
 });
 
 export const toCopperContact = (contact: ContactTemplate): CopperContact => ({
-  name: contact.name,
-  first_name: contact.firstName,
-  last_name: contact.lastName,
-  company_name: contact.organization,
+  name: contact.name || "",
+  first_name: contact.firstName || "",
+  last_name: contact.lastName || "",
+  company_name: contact.organization || "",
   emails: contact.email ? [{ email: contact.email, category: "work" }] : [],
   phone_numbers: contact.phoneNumbers.map(phoneNumber => ({
     category: toCategory(phoneNumber.label),

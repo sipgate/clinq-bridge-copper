@@ -3,11 +3,17 @@ import axios from "axios";
 
 export type Category = "work" | "home" | "personal" | "mobile" | "other";
 
+export interface Company {
+  id: number;
+  name: string;
+}
+
 export interface CopperContact {
   id?: number;
   name: string;
   first_name: string;
   last_name: string;
+  company_id?: number;
   company_name: string;
   emails: Array<{ email: string; category: Category }>;
   phone_numbers: Array<{
@@ -53,6 +59,9 @@ export const getContacts = async (
 };
 
 export const createContact = async (config: Config, contact: CopperContact) => {
+  const company = await getOrCreateCompany(config, contact.company_name);
+  contact.company_id = company.id;
+
   const { data } = await copper(config).post<CopperContact>("/people", contact);
   return data;
 };
@@ -62,6 +71,9 @@ export const updateContact = async (
   id: string,
   contact: CopperContact
 ) => {
+  const company = await getOrCreateCompany(config, contact.company_name);
+  contact.company_id = company.id;
+
   const { data } = await copper(config).put<CopperContact>(
     `/people/${id}`,
     contact
@@ -71,4 +83,25 @@ export const updateContact = async (
 
 export const deleteContact = async (config: Config, id: string) => {
   await copper(config).delete(`/people/${id}`);
+};
+
+const getOrCreateCompany = async (config: Config, name: string) => {
+  const company = await getCompanyByName(config, name);
+  return company ? company : createCompany(config, name);
+};
+
+const getCompanyByName = async (config: Config, name: string) => {
+  const { data } = await copper(config).post<Company[]>("/companies/search", {
+    name
+  });
+
+  return data.length ? data[0] : null;
+};
+
+const createCompany = async (config: Config, name: string) => {
+  const { data } = await copper(config).post<Company>("/companies", {
+    name
+  });
+
+  return data;
 };

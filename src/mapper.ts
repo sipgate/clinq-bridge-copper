@@ -1,4 +1,4 @@
-import { Contact, PhoneNumberLabel } from "@clinq/bridge";
+import { Contact, ContactTemplate, PhoneNumberLabel } from "@clinq/bridge";
 import { Category, CopperContact } from "./copper";
 
 const toLabel = (category: Category) => {
@@ -12,6 +12,19 @@ const toLabel = (category: Category) => {
       return PhoneNumberLabel.MOBILE;
     default:
       return PhoneNumberLabel.WORK;
+  }
+};
+
+const toCategory = (label: PhoneNumberLabel): Category => {
+  switch (label) {
+    case PhoneNumberLabel.HOME:
+      return "home";
+    case PhoneNumberLabel.WORK:
+      return "work";
+    case PhoneNumberLabel.MOBILE:
+      return "mobile";
+    default:
+      return "other";
   }
 };
 
@@ -30,4 +43,16 @@ export const toContact = (contact: CopperContact): Contact => ({
   })),
   avatarUrl: null,
   contactUrl: null
+});
+
+export const toCopperContact = (contact: ContactTemplate): CopperContact => ({
+  name: contact.name,
+  first_name: contact.firstName,
+  last_name: contact.lastName,
+  company_name: contact.organization,
+  emails: contact.email ? [{ email: contact.email, category: "work" }] : [],
+  phone_numbers: contact.phoneNumbers.map(phoneNumber => ({
+    category: toCategory(phoneNumber.label),
+    number: phoneNumber.phoneNumber
+  }))
 });

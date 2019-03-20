@@ -1,0 +1,13 @@
+{
+  "name": "Jane Doe",
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane@example.com",
+  "organization": "Example Inc.",
+  "phoneNumbers": [
+    {
+      "phoneNumber": "+4915799912345",
+      "label": "WORK"
+    }
+  ]
+}

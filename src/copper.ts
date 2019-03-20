@@ -4,7 +4,7 @@ import axios from "axios";
 export type Category = "work" | "home" | "personal" | "mobile" | "other";
 
 export interface CopperContact {
-  id: number;
+  id?: number;
   name: string;
   first_name: string;
   last_name: string;
@@ -50,4 +50,25 @@ export const getContacts = async (
   } else {
     return contacts;
   }
+};
+
+export const createContact = async (config: Config, contact: CopperContact) => {
+  const { data } = await copper(config).post<CopperContact>("/people", contact);
+  return data;
+};
+
+export const updateContact = async (
+  config: Config,
+  id: string,
+  contact: CopperContact
+) => {
+  const { data } = await copper(config).put<CopperContact>(
+    `/people/${id}`,
+    contact
+  );
+  return data;
+};
+
+export const deleteContact = async (config: Config, id: string) => {
+  await copper(config).delete(`/people/${id}`);
 };

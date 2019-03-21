@@ -45,8 +45,20 @@ export const toContact = (contact: CopperContact): Contact => ({
   contactUrl: null
 });
 
+const buildName = ({ name, firstName, lastName }: ContactTemplate) => {
+  if (name) {
+    return name;
+  }
+
+  if (firstName && lastName) {
+    return `${firstName} ${lastName}`;
+  }
+
+  return firstName || lastName || "";
+};
+
 export const toCopperContact = (contact: ContactTemplate): CopperContact => ({
-  name: contact.name || "",
+  name: buildName(contact),
   first_name: contact.firstName || "",
   last_name: contact.lastName || "",
   company_name: contact.organization || "",

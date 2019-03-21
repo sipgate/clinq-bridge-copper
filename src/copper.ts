@@ -62,8 +62,16 @@ export const createContact = async (config: Config, contact: CopperContact) => {
   const company = await getOrCreateCompany(config, contact.company_name);
   contact.company_id = company.id;
 
-  const { data } = await copper(config).post<CopperContact>("/people", contact);
-  return data;
+  try {
+    const { data } = await copper(config).post<CopperContact>(
+      "/people",
+      contact
+    );
+    return data;
+  } catch (error) {
+    console.error(error.response.data);
+    throw error;
+  }
 };
 
 export const updateContact = async (
@@ -74,15 +82,25 @@ export const updateContact = async (
   const company = await getOrCreateCompany(config, contact.company_name);
   contact.company_id = company.id;
 
-  const { data } = await copper(config).put<CopperContact>(
-    `/people/${id}`,
-    contact
-  );
-  return data;
+  try {
+    const { data } = await copper(config).put<CopperContact>(
+      `/people/${id}`,
+      contact
+    );
+    return data;
+  } catch (error) {
+    console.error(error.response.data);
+    throw error;
+  }
 };
 
 export const deleteContact = async (config: Config, id: string) => {
-  await copper(config).delete(`/people/${id}`);
+  try {
+    await copper(config).delete(`/people/${id}`);
+  } catch (error) {
+    console.error(error.response.data);
+    throw error;
+  }
 };
 
 const getOrCreateCompany = async (config: Config, name: string) => {
@@ -91,17 +109,27 @@ const getOrCreateCompany = async (config: Config, name: string) => {
 };
 
 const getCompanyByName = async (config: Config, name: string) => {
-  const { data } = await copper(config).post<Company[]>("/companies/search", {
-    name
-  });
+  try {
+    const { data } = await copper(config).post<Company[]>("/companies/search", {
+      name
+    });
 
-  return data.length ? data[0] : null;
+    return data.length ? data[0] : null;
+  } catch (error) {
+    console.error(error.response.data);
+    throw error;
+  }
 };
 
 const createCompany = async (config: Config, name: string) => {
-  const { data } = await copper(config).post<Company>("/companies", {
-    name
-  });
+  try {
+    const { data } = await copper(config).post<Company>("/companies", {
+      name
+    });
 
-  return data;
+    return data;
+  } catch (error) {
+    console.error(error.response.data);
+    throw error;
+  }
 };

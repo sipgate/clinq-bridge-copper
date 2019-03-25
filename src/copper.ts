@@ -8,6 +8,11 @@ export interface Company {
   name: string;
 }
 
+export interface CopperEmail {
+  email: string;
+  category: Category;
+}
+
 export interface CopperContact {
   id?: number;
   name: string;
@@ -15,7 +20,20 @@ export interface CopperContact {
   last_name: string;
   company_id?: number;
   company_name: string;
-  emails: Array<{ email: string; category: Category }>;
+  emails: CopperEmail[];
+  phone_numbers: Array<{
+    number: string;
+    category: Category;
+  }>;
+}
+
+export interface CopperLead {
+  id?: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  company_name: string;
+  email: CopperEmail;
   phone_numbers: Array<{
     number: string;
     category: Category;
@@ -23,6 +41,8 @@ export interface CopperContact {
 }
 
 const PAGE_SIZE = 200;
+
+const NO_OP = () => null;
 
 const copper = ({ apiKey }: Config) => {
   const [email, key] = apiKey.split(":");
@@ -58,6 +78,25 @@ export const getContacts = async (
   }
 };
 
+export const getLeads = async (
+  config: Config,
+  page: number = 1,
+  accumulated: CopperLead[] = []
+): Promise<CopperLead[]> => {
+  const { data } = await copper(config).post<CopperLead[]>("/leads/search", {
+    page_size: PAGE_SIZE,
+    page_number: page
+  });
+
+  const contacts = [...accumulated, ...data];
+
+  if (data.length === PAGE_SIZE) {
+    return getLeads(config, page + 1, contacts);
+  } else {
+    return contacts;
+  }
+};
+
 export const createContact = async (config: Config, contact: CopperContact) => {
   const company = await getOrCreateCompany(config, contact.company_name);
   contact.company_id = company.id;
@@ -79,16 +118,52 @@ export const updateContact = async (
   id: string,
   contact: CopperContact
 ) => {
-  const company = await getOrCreateCompany(config, contact.company_name);
-  contact.company_id = company.id;
-
   try {
+    const [maybeContact, maybeLead] = await Promise.all([
+      getContactById(config, id).catch(NO_OP),
+      getLeadById(config, id).catch(NO_OP)
+    ]);
+
+    // contact IS a lead and NOT a contact
+    if (maybeLead && !maybeContact) {
+      throw new Error("Updating leads is not supported");
+    }
+
+    const company = await getOrCreateCompany(config, contact.company_name);
+    contact.company_id = company.id;
+
     const { data } = await copper(config).put<CopperContact>(
       `/people/${id}`,
       contact
     );
     return data;
   } catch (error) {
+    if (error.response) {
+      console.error(error.response.data);
+    }
+    throw error;
+  }
+};
+
+export const getLeadById = async (config: Config, id: string) => {
+  try {
+    return await copper(config).get(`/leads/${id}`);
+  } catch (error) {
+    if (error.response.data.status === 404) {
+      return null;
+    }
+    console.error(error.response.data);
+    throw error;
+  }
+};
+
+export const getContactById = async (config: Config, id: string) => {
+  try {
+    return await copper(config).get(`/people/${id}`);
+  } catch (error) {
+    if (error.response.data.status === 404) {
+      return null;
+    }
     console.error(error.response.data);
     throw error;
   }

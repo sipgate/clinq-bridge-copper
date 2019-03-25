@@ -1,5 +1,5 @@
 import { Contact, ContactTemplate, PhoneNumberLabel } from "@clinq/bridge";
-import { Category, CopperContact } from "./copper";
+import { Category, CopperContact, CopperLead } from "./copper";
 
 const toLabel = (category: Category) => {
   switch (category) {
@@ -44,6 +44,22 @@ export const toContact = (contact: CopperContact): Contact => ({
   avatarUrl: null,
   contactUrl: null
 });
+
+export const leadToContact = (contact: CopperLead): Contact => ({
+  id: String(contact.id),
+  name: contact.name,
+  firstName: contact.first_name,
+  lastName: contact.last_name,
+  organization: contact.company_name,
+  email: contact.email.email,
+  phoneNumbers: contact.phone_numbers.map(phoneNumber => ({
+    label: toLabel(phoneNumber.category),
+    phoneNumber: phoneNumber.number
+  })),
+  avatarUrl: null,
+  contactUrl: null
+});
+
 
 const buildName = ({ name, firstName, lastName }: ContactTemplate) => {
   if (name) {

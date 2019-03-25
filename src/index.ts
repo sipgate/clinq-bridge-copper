@@ -9,14 +9,20 @@ import {
   createContact,
   deleteContact,
   getContacts,
+  getLeads,
   updateContact
 } from "./copper";
-import { toContact, toCopperContact } from "./mapper";
+import { leadToContact, toContact, toCopperContact } from "./mapper";
 
 class CopperAdapter implements Adapter {
   public async getContacts(config: Config) {
-    const copperContacts = await getContacts(config);
-    return copperContacts.map(toContact);
+    const [copperContacts, copperLeads] = await Promise.all([
+      getContacts(config),
+      getLeads(config)
+    ]);
+    const mappedContacts = copperContacts.map(toContact);
+    const mappedLeads = copperLeads.map(leadToContact);
+    return [...mappedContacts, ...mappedLeads];
   }
 
   public async createContact(config: Config, contact: ContactTemplate) {

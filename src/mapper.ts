@@ -45,21 +45,23 @@ export const toContact = (contact: CopperContact): Contact => ({
   contactUrl: null
 });
 
-export const leadToContact = (contact: CopperLead): Contact => ({
-  id: String(contact.id),
-  name: contact.name,
-  firstName: contact.first_name,
-  lastName: contact.last_name,
-  organization: contact.company_name,
-  email: contact.email.email,
-  phoneNumbers: contact.phone_numbers.map(phoneNumber => ({
-    label: toLabel(phoneNumber.category),
-    phoneNumber: phoneNumber.number
-  })),
-  avatarUrl: null,
-  contactUrl: null
-});
-
+export const leadToContact = (contact: CopperLead): Contact => {
+  const email = contact.email ? contact.email.email : null;
+  return {
+    id: String(contact.id),
+    name: contact.name,
+    firstName: contact.first_name,
+    lastName: contact.last_name,
+    organization: contact.company_name,
+    email,
+    phoneNumbers: contact.phone_numbers.map(phoneNumber => ({
+      label: toLabel(phoneNumber.category),
+      phoneNumber: phoneNumber.number
+    })),
+    avatarUrl: null,
+    contactUrl: null
+  };
+};
 
 const buildName = ({ name, firstName, lastName }: ContactTemplate) => {
   if (name) {

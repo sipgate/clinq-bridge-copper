@@ -12,7 +12,7 @@
   ],
   "license": "Apache-2.0",
   "scripts": {
-    "postinstall": "tsc",
+    "build": "tsc",
     "start": "USE_MEMORY_CACHE=true ts-node-dev src/index.ts",
     "lint": "tslint --project tsconfig.json"
   },

@@ -13,8 +13,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
-    "start": "USE_MEMORY_CACHE=true ts-node-dev src/index.ts",
-    "lint": "tslint --project tsconfig.json"
+    "start": "ts-node-dev src/index.ts"
   },
   "dependencies": {
     "@clinq/bridge": "^11.2.4",
@@ -38,7 +37,6 @@
   "lint-staged": {
     "*.{ts}": [
       "prettier --write",
-      "tslint",
       "git add"
     ],
     "*.{json,yml,md}": [

@@ -58,7 +58,7 @@ const copper = ({ apiKey }: Config) => {
 
 export const getContacts = async (
   config: Config,
-  page: number = 1,
+  page = 1,
   accumulated: CopperContact[] = []
 ): Promise<CopperContact[]> => {
   const { data } = await copper(config).post<CopperContact[]>(
@@ -80,7 +80,7 @@ export const getContacts = async (
 
 export const getLeads = async (
   config: Config,
-  page: number = 1,
+  page = 1,
   accumulated: CopperLead[] = []
 ): Promise<CopperLead[]> => {
   const { data } = await copper(config).post<CopperLead[]>("/leads/search", {

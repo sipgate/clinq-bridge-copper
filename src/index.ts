@@ -3,14 +3,14 @@ import {
   Config,
   ContactTemplate,
   ContactUpdate,
-  start
+  start,
 } from "@clinq/bridge";
 import {
   createContact,
   deleteContact,
   getContacts,
   getLeads,
-  updateContact
+  updateContact,
 } from "./copper";
 import { leadToContact, toContact, toCopperContact } from "./mapper";
 
@@ -18,7 +18,7 @@ class CopperAdapter implements Adapter {
   public async getContacts(config: Config) {
     const [copperContacts, copperLeads] = await Promise.all([
       getContacts(config),
-      getLeads(config)
+      getLeads(config),
     ]);
     const mappedContacts = copperContacts.map(toContact);
     const mappedLeads = copperLeads.map(leadToContact);

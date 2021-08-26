@@ -35,14 +35,14 @@ export const toContact = (contact: CopperContact): Contact => ({
   lastName: contact.last_name,
   organization: contact.company_name,
   email: contact.emails.length
-    ? contact.emails.map(email => email.email)[0]
+    ? contact.emails.map((email) => email.email)[0]
     : null,
-  phoneNumbers: contact.phone_numbers.map(phoneNumber => ({
+  phoneNumbers: contact.phone_numbers.map((phoneNumber) => ({
     label: toLabel(phoneNumber.category),
-    phoneNumber: phoneNumber.number
+    phoneNumber: phoneNumber.number,
   })),
   avatarUrl: null,
-  contactUrl: null
+  contactUrl: null,
 });
 
 export const leadToContact = (contact: CopperLead): Contact => {
@@ -54,12 +54,12 @@ export const leadToContact = (contact: CopperLead): Contact => {
     lastName: contact.last_name,
     organization: contact.company_name,
     email,
-    phoneNumbers: contact.phone_numbers.map(phoneNumber => ({
+    phoneNumbers: contact.phone_numbers.map((phoneNumber) => ({
       label: toLabel(phoneNumber.category),
-      phoneNumber: phoneNumber.number
+      phoneNumber: phoneNumber.number,
     })),
     avatarUrl: null,
-    contactUrl: null
+    contactUrl: null,
   };
 };
 
@@ -81,8 +81,8 @@ export const toCopperContact = (contact: ContactTemplate): CopperContact => ({
   last_name: contact.lastName || "",
   company_name: contact.organization || "",
   emails: contact.email ? [{ email: contact.email, category: "work" }] : [],
-  phone_numbers: contact.phoneNumbers.map(phoneNumber => ({
+  phone_numbers: contact.phoneNumbers.map((phoneNumber) => ({
     category: toCategory(phoneNumber.label),
-    number: phoneNumber.phoneNumber
-  }))
+    number: phoneNumber.phoneNumber,
+  })),
 });

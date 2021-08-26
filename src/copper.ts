@@ -51,8 +51,8 @@ const copper = ({ apiKey }: Config) => {
     headers: {
       "X-PW-Application": "developer_api",
       "X-PW-AccessToken": key,
-      "X-PW-UserEmail": email
-    }
+      "X-PW-UserEmail": email,
+    },
   });
 };
 
@@ -65,7 +65,7 @@ export const getContacts = async (
     "/people/search",
     {
       page_size: PAGE_SIZE,
-      page_number: page
+      page_number: page,
     }
   );
 
@@ -85,7 +85,7 @@ export const getLeads = async (
 ): Promise<CopperLead[]> => {
   const { data } = await copper(config).post<CopperLead[]>("/leads/search", {
     page_size: PAGE_SIZE,
-    page_number: page
+    page_number: page,
   });
 
   const contacts = [...accumulated, ...data];
@@ -121,7 +121,7 @@ export const updateContact = async (
   try {
     const [maybeContact, maybeLead] = await Promise.all([
       getContactById(config, id).catch(NO_OP),
-      getLeadById(config, id).catch(NO_OP)
+      getLeadById(config, id).catch(NO_OP),
     ]);
 
     // contact IS a lead and NOT a contact
@@ -186,7 +186,7 @@ const getOrCreateCompany = async (config: Config, name: string) => {
 const getCompanyByName = async (config: Config, name: string) => {
   try {
     const { data } = await copper(config).post<Company[]>("/companies/search", {
-      name
+      name,
     });
 
     return data.length ? data[0] : null;
@@ -199,7 +199,7 @@ const getCompanyByName = async (config: Config, name: string) => {
 const createCompany = async (config: Config, name: string) => {
   try {
     const { data } = await copper(config).post<Company>("/companies", {
-      name
+      name,
     });
 
     return data;

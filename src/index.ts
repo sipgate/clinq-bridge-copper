@@ -17,16 +17,21 @@ import { leadToContact, toContact, toCopperContact } from "./mapper";
 
 class CopperAdapter implements Adapter {
   public async getContacts(config: Config) {
+    var contactsExceptionThrown = false;
     let contacts: Contact[] = [];
     try {
       const copperContacts = await getContacts(config);
       contacts = copperContacts.map(toContact);
-    } catch (ignored) {}
+    } catch (exception) {
+      contactsExceptionThrown = true;
+    }
 
     try {
       const copperLeads = await getLeads(config);
       contacts = contacts.concat(copperLeads.map(leadToContact));
-    } catch (ignored) {}
+    } catch (exception) {
+      throw exception;
+    }
     return contacts;
   }
 

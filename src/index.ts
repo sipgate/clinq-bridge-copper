@@ -1,6 +1,7 @@
 import {
   Adapter,
   Config,
+  Contact,
   ContactTemplate,
   ContactUpdate,
   start,
@@ -16,13 +17,17 @@ import { leadToContact, toContact, toCopperContact } from "./mapper";
 
 class CopperAdapter implements Adapter {
   public async getContacts(config: Config) {
-    const [copperContacts, copperLeads] = await Promise.all([
-      getContacts(config),
-      getLeads(config),
-    ]);
-    const mappedContacts = copperContacts.map(toContact);
-    const mappedLeads = copperLeads.map(leadToContact);
-    return [...mappedContacts, ...mappedLeads];
+    let contacts: Contact[] = [];
+    try {
+      const copperContacts = await getContacts(config);
+      contacts = copperContacts.map(toContact);
+    } catch (ignored) {}
+
+    try {
+      const copperLeads = await getLeads(config);
+      contacts = contacts.concat(copperLeads.map(leadToContact));
+    } catch (ignored) {}
+    return contacts;
   }
 
   public async createContact(config: Config, contact: ContactTemplate) {
